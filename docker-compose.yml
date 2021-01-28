@@ -1,0 +1,9 @@
+version: "3.7"
+
+services:
+  web:
+    build:
+      context: trade_app
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
