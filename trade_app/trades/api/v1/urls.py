@@ -1,7 +1,14 @@
 from rest_framework import routers
 
-from trades.api.v1.views import CurrencyViewSet, ItemViewSet, InventoryViewSet, WatchListViewSet, PriceViewSet, \
-    OfferViewSet, TradeViewSet
+from trades.api.v1.views import (
+    WatchListViewSet,
+    InventoryViewSet,
+    CurrencyViewSet,
+    PriceViewSet,
+    OfferViewSet,
+    TradeViewSet,
+    ItemViewSet,
+)
 
 router = routers.DefaultRouter()
 router.register(r'currencies', CurrencyViewSet)

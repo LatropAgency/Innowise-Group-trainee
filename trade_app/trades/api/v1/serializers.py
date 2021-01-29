@@ -1,6 +1,14 @@
 from rest_framework import serializers
 
-from trades.models import Currency, Item, Inventory, WatchList, Price, Offer, Trade
+from trades.models import (
+    WatchList,
+    Inventory,
+    Currency,
+    Price,
+    Offer,
+    Trade,
+    Item,
+)
 
 
 class CurrencySerializer(serializers.ModelSerializer):
