@@ -1,17 +1,45 @@
 from rest_framework import serializers
-from rest_framework_simplejwt.state import User
+
+from trades.models import Currency, Item, Inventory, WatchList, Price, Offer, Trade
 
 
-class UserSerializer(serializers.ModelSerializer):
-    def create(self, validated_data):
-        user = super().create(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
-
+class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'username', 'password')
-        extra_kwargs = {
-            'password': {'write_only': True},
-        }
+        model = Currency
+        fields = ('id', 'code', 'name')
+
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ('id', 'code', 'name', 'price', 'currency', 'details')
+
+
+class InventorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = ('id', 'user', 'item', 'quantity')
+
+
+class WatchListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WatchList
+        fields = ('id', 'user', 'item')
+
+
+class PriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Price
+        fields = ('id', 'currency', 'item', 'price', 'date')
+
+
+class OfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Offer
+        fields = ('id', 'user', 'item', 'entry_quantity', 'quantity', 'order_type', 'price', 'is_active')
+
+
+class TradeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trade
+        fields = ('id', 'item', 'buyer', 'quantity', 'unit_price', 'description', 'buyer_offer', 'seller_offer')

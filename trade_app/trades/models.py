@@ -1,6 +1,8 @@
 from django.db import models
 from rest_framework_simplejwt.state import User
 
+from core.enum_types import OrderType
+
 
 class StockBase(models.Model):
     """Base"""
@@ -56,7 +58,7 @@ class Offer(models.Model):
     item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL)
     entry_quantity = models.IntegerField("Requested quantity")
     quantity = models.IntegerField()
-    order_type = models.PositiveSmallIntegerField(choices=((0, 'active'), (1, 'not active')))
+    order_type = models.PositiveSmallIntegerField(choices=OrderType.items())
     price = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
