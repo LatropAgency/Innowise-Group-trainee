@@ -47,9 +47,12 @@ class ItemViewSet(RetrieveModelMixin,
     queryset = Item.objects.all()
     serializer_class = ItemListSerializer
 
-    def retrieve(self, request, *args, **kwargs):
-        self.serializer_class = ItemDetailSerializer
-        return super(ItemViewSet, self).retrieve(request, *args, **kwargs)
+    serializer = {
+        'list': ItemListSerializer,
+    }
+
+    def get_serializer_class(self):
+        return self.serializer.get(self.action, ItemDetailSerializer)
 
 
 class InventoryViewSet(RetrieveModelMixin,
