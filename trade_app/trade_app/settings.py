@@ -133,3 +133,8 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(hours=12),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
 }
+
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', None)
+CELERY_BROKER_URL = (os.environ.get('CELERY_BROKER_URL'), None)
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
