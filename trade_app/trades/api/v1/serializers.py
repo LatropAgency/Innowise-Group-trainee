@@ -17,7 +17,13 @@ class CurrencySerializer(serializers.ModelSerializer):
         fields = ('id', 'code', 'name')
 
 
-class ItemSerializer(serializers.ModelSerializer):
+class ItemListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ('id', 'code', 'name', 'price', 'currency')
+
+
+class ItemDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ('id', 'code', 'name', 'price', 'currency', 'details')
