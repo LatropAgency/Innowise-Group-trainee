@@ -96,7 +96,6 @@ class OfferViewSet(RetrieveModelMixin,
 
 
 class TradeViewSet(RetrieveModelMixin,
-                   CreateModelMixin,
                    ListModelMixin,
                    GenericViewSet):
     queryset = Trade.objects.all()

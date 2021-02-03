@@ -30,7 +30,7 @@ services:
     build:
       context: trade_app
       dockerfile: Dockerfile
-    command: celery -A trade_app.celery worker --loglevel=info
+    command: celery -A trade_app worker -B
     env_file: trade_app/.env
     depends_on:
       - redis
