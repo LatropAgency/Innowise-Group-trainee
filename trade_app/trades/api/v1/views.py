@@ -28,22 +28,26 @@ from trades.models import (
 )
 
 
-class CurrencyViewSet(RetrieveModelMixin,
-                      DestroyModelMixin,
-                      CreateModelMixin,
-                      UpdateModelMixin,
-                      ListModelMixin,
-                      GenericViewSet):
+class CurrencyViewSet(
+    RetrieveModelMixin,
+    DestroyModelMixin,
+    CreateModelMixin,
+    UpdateModelMixin,
+    ListModelMixin,
+    GenericViewSet,
+):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
 
 
-class ItemViewSet(RetrieveModelMixin,
-                  DestroyModelMixin,
-                  CreateModelMixin,
-                  UpdateModelMixin,
-                  ListModelMixin,
-                  GenericViewSet):
+class ItemViewSet(
+    RetrieveModelMixin,
+    DestroyModelMixin,
+    CreateModelMixin,
+    UpdateModelMixin,
+    ListModelMixin,
+    GenericViewSet,
+):
     queryset = Item.objects.all()
     serializer_class = ItemListSerializer
 
@@ -55,48 +59,58 @@ class ItemViewSet(RetrieveModelMixin,
         return self.serializer.get(self.action, ItemDetailSerializer)
 
 
-class InventoryViewSet(RetrieveModelMixin,
-                       DestroyModelMixin,
-                       CreateModelMixin,
-                       UpdateModelMixin,
-                       ListModelMixin,
-                       GenericViewSet):
+class InventoryViewSet(
+    RetrieveModelMixin,
+    DestroyModelMixin,
+    CreateModelMixin,
+    UpdateModelMixin,
+    ListModelMixin,
+    GenericViewSet,
+):
     queryset = Inventory.objects.all()
     serializer_class = InventorySerializer
 
 
-class WatchListViewSet(RetrieveModelMixin,
-                       DestroyModelMixin,
-                       CreateModelMixin,
-                       UpdateModelMixin,
-                       ListModelMixin,
-                       GenericViewSet):
+class WatchListViewSet(
+    RetrieveModelMixin,
+    DestroyModelMixin,
+    CreateModelMixin,
+    UpdateModelMixin,
+    ListModelMixin,
+    GenericViewSet,
+):
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializer
 
 
-class PriceViewSet(RetrieveModelMixin,
-                   DestroyModelMixin,
-                   CreateModelMixin,
-                   UpdateModelMixin,
-                   ListModelMixin,
-                   GenericViewSet):
+class PriceViewSet(
+    RetrieveModelMixin,
+    DestroyModelMixin,
+    CreateModelMixin,
+    UpdateModelMixin,
+    ListModelMixin,
+    GenericViewSet,
+):
     queryset = Price.objects.all()
     serializer_class = PriceSerializer
 
 
-class OfferViewSet(RetrieveModelMixin,
-                   DestroyModelMixin,
-                   CreateModelMixin,
-                   UpdateModelMixin,
-                   ListModelMixin,
-                   GenericViewSet):
+class OfferViewSet(
+    RetrieveModelMixin,
+    DestroyModelMixin,
+    CreateModelMixin,
+    UpdateModelMixin,
+    ListModelMixin,
+    GenericViewSet,
+):
     queryset = Offer.objects.all()
     serializer_class = OfferSerializer
 
 
-class TradeViewSet(RetrieveModelMixin,
-                   ListModelMixin,
-                   GenericViewSet):
+class TradeViewSet(
+    RetrieveModelMixin,
+    ListModelMixin,
+    GenericViewSet,
+):
     queryset = Trade.objects.all()
     serializer_class = TradeSerializer
