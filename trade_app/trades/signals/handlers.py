@@ -6,5 +6,5 @@ from trades.models import Inventory
 
 
 @receiver(post_save, sender=User)
-def create_empty_inventory(sender, *args, **kwargs):
-    Inventory(user=sender).save()
+def create_empty_inventory(sender, instance, *args, **kwargs):
+    Inventory(user=instance).save()
