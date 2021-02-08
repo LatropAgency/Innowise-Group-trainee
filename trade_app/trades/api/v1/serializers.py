@@ -29,6 +29,15 @@ class ItemDetailSerializer(serializers.ModelSerializer):
         fields = ('id', 'code', 'name', 'price', 'currency', 'details')
 
 
+class ItemStatisticSerializer(serializers.Serializer):
+    popular = ItemDetailSerializer(many=False)
+    expensive = ItemDetailSerializer(many=False)
+    desired = ItemDetailSerializer(many=False)
+
+    class Meta:
+        fields = ('popular', 'expensive', 'desired')
+
+
 class InventorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Inventory

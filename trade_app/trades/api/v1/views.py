@@ -8,10 +8,11 @@ from rest_framework.mixins import (
     ListModelMixin,
 )
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.viewsets import GenericViewSet
 
 from trades.api.v1.serializers import (
     ItemDetailSerializer,
+    ItemStatisticSerializer,
     WatchListSerializer,
     InventorySerializer,
     CurrencySerializer,
@@ -77,6 +78,18 @@ class ItemViewSet(
     def desired(self, *args, **kwargs):
         item_id = Offer.objects.values('item').annotate(sum=Sum('quantity')).order_by('-sum').first()['item']
         serializer = self.get_serializer(Item.objects.get(pk=item_id), many=False)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['GET'], description='Get statistic')
+    def statistic(self, *args, **kwargs):
+        expensive_item = Item.objects.filter().order_by('-price').first()
+        popular_item_id = Trade.objects.values('item').annotate(sum=Sum('quantity')).order_by('-sum').first()['item']
+        desired_item_id = Offer.objects.values('item').annotate(sum=Sum('quantity')).order_by('-sum').first()['item']
+        serializer = ItemStatisticSerializer({
+            'popular': Item.objects.get(pk=popular_item_id),
+            'expensive': expensive_item,
+            'desired': Item.objects.get(pk=desired_item_id)
+        })
         return Response(serializer.data)
 
 
