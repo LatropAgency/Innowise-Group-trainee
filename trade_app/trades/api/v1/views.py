@@ -1,3 +1,5 @@
+from django.db.models import Sum
+from rest_framework.decorators import action
 from rest_framework.mixins import (
     RetrieveModelMixin,
     DestroyModelMixin,
@@ -5,7 +7,8 @@ from rest_framework.mixins import (
     UpdateModelMixin,
     ListModelMixin,
 )
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from trades.api.v1.serializers import (
     ItemDetailSerializer,
@@ -57,6 +60,24 @@ class ItemViewSet(
 
     def get_serializer_class(self):
         return self.serializer.get(self.action, ItemDetailSerializer)
+
+    @action(detail=False, methods=['GET'], description='Get the most expensive item')
+    def expensive(self, *args, **kwargs):
+        item = Item.objects.filter().order_by('-price').first()
+        serializer = self.get_serializer(item, many=False)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['GET'], description='Get the most popular item')
+    def popular(self, *args, **kwargs):
+        item_id = Trade.objects.values('item').annotate(sum=Sum('quantity')).order_by('-sum').first()['item']
+        serializer = self.get_serializer(Item.objects.get(pk=item_id), many=False)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['GET'], description='Get the most desired item')
+    def desired(self, *args, **kwargs):
+        item_id = Offer.objects.values('item').annotate(sum=Sum('quantity')).order_by('-sum').first()['item']
+        serializer = self.get_serializer(Item.objects.get(pk=item_id), many=False)
+        return Response(serializer.data)
 
 
 class InventoryViewSet(
