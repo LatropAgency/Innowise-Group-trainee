@@ -43,20 +43,20 @@ class Item(StockBase):
 class Inventory(models.Model):
     """The number of stocks a particular user has"""
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name="user_inventory")
-    item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL, related_name="inventory_item")
+    item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.CASCADE, related_name="inventory_item")
     quantity = models.IntegerField("Stocks quantity", default=0)
 
     def __str__(self):
-        return f'{self.user} {self.item.code}x{self.quantity}'
+        return f'{self.user}'
 
 
 class WatchList(models.Model):
     """Current user, favorite list of stocks"""
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name="watch_list_user")
-    item = models.ForeignKey(Item, blank=True, null=True, on_delete=models.SET_NULL, related_name="watch_list_item")
+    items = models.ManyToManyField(Item, related_name="watch_list_item")
 
     def __str__(self):
-        return f'{self.id} {self.item.code}'
+        return f'{self.user}'
 
 
 class Price(models.Model):
@@ -126,3 +126,5 @@ class Trade(models.Model):
 
     def __str__(self):
         return f'seller: {self.seller} buyer: {self.buyer} item: {self.item.code}x{self.quantity}'
+
+

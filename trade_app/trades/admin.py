@@ -35,9 +35,9 @@ class InventoryAdmin(admin.ModelAdmin):
 
 @admin.register(WatchList)
 class WatchListAdmin(admin.ModelAdmin):
-    list_display = ('user', 'item')
+    list_display = ('user',)
     search_fields = ('user__username',)
-    autocomplete_fields = ('user', 'item')
+    autocomplete_fields = ('user', 'items')
     ordering = ('user__username',)
 
 
