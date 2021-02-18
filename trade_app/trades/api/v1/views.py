@@ -1,7 +1,9 @@
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Sum, F, Case, When, CharField, IntegerField, DecimalField
+from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.parsers import MultiPartParser
+from rest_framework.generics import get_object_or_404
+from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.mixins import (
     RetrieveModelMixin,
     DestroyModelMixin,
@@ -23,7 +25,7 @@ from trades.api.v1.serializers import (
     ItemListSerializer,
     PriceSerializer,
     OfferSerializer,
-    TradeSerializer,
+    TradeSerializer, ItemIdSerializer, ItemTest,
 )
 from trades.models import (
     WatchList,
@@ -58,7 +60,7 @@ class ItemViewSet(
 ):
     queryset = Item.objects.all()
     serializer_class = ItemDetailSerializer
-    parser_classes = (MultiPartParser,)
+    parser_classes = (MultiPartParser, JSONParser)
 
     serializer = {
         'list': ItemListSerializer,
@@ -66,6 +68,11 @@ class ItemViewSet(
 
     def get_serializer_class(self):
         return self.serializer.get(self.action, ItemDetailSerializer)
+
+    def list(self, request, *args, **kwargs):
+        items = self.get_queryset().select_related('currency')
+        serializer = ItemListSerializer(items, many=True)
+        return Response(serializer.data)
 
     @action(detail=False, methods=['GET'], description='Get the most expensive item')
     def expensive(self, *args, **kwargs):
@@ -139,6 +146,24 @@ class ItemViewSet(
         error_serializer.is_valid(raise_exception=True)
         return Response(error_serializer.data)
 
+    @action(detail=False, methods=('post',), url_path='test')
+    def test(self, request):
+        items_serializer = ItemTest(data=request.data, many=True)
+        items_serializer.is_valid(raise_exception=True)
+        whens_expressions = []
+        for i in items_serializer.validated_data:
+            whens_expressions.append(When(id=i['id'], then=i['price']))
+        id_list = [item['id'] for item in items_serializer.validated_data]
+        items = Item.objects.filter(id__in=id_list).annotate(
+            value=Case(
+                *whens_expressions,
+                output_field=DecimalField(max_digits=7, decimal_places=2),
+                default=0.00
+            )
+        ).annotate(result=F('value') + F('price')).values('id', 'result')
+
+        return Response(items)
+
 
 class InventoryViewSet(
     RetrieveModelMixin,
@@ -162,6 +187,15 @@ class WatchListViewSet(
 ):
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializer
+    parser_classes = (MultiPartParser, JSONParser)
+
+    @action(detail=True, methods=('post',), url_path='add')
+    def add_item_to_watchlist(self, request, pk, *args, **kwargs):
+        watch_list = get_object_or_404(WatchList, pk=pk)
+        serializer = ItemIdSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        watch_list.items.add(*serializer.validated_data['items'])
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class PriceViewSet(

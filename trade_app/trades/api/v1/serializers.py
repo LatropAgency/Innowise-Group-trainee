@@ -21,6 +21,8 @@ class CurrencySerializer(serializers.ModelSerializer):
 
 
 class ItemListSerializer(serializers.ModelSerializer):
+    currency = CurrencySerializer(many=False)
+
     class Meta:
         model = Item
         fields = ('id', 'code', 'name', 'price', 'currency')
@@ -41,7 +43,7 @@ class InventorySerializer(serializers.ModelSerializer):
 class WatchListSerializer(serializers.ModelSerializer):
     class Meta:
         model = WatchList
-        fields = ('id', 'user', 'item')
+        fields = ('id', 'user', 'items')
 
 
 class PriceSerializer(serializers.ModelSerializer):
@@ -58,19 +60,16 @@ class OfferSerializer(serializers.ModelSerializer):
     @staticmethod
     def buy_offer(request, pk):
         sale_offer = get_object_or_404(Offer, id=pk)
-        if not sale_offer.is_active:
-            return status.HTTP_400_BAD_REQUEST
-        else:
-            buy_offer = Offer(user=request.user, quantity=sale_offer.quantity, entry_quantity=sale_offer.quantity,
-                              price=sale_offer.price, order_type=OrderType.BUY.value, item=sale_offer.item)
-            buy_offer.save()
-            diff = min(buy_offer.quantity, sale_offer.quantity)
-            Trade(item=sale_offer.item, seller=sale_offer.user, buyer=buy_offer.user, quantity=diff,
-                  unit_price=sale_offer.price / sale_offer.quantity, buyer_offer=buy_offer,
-                  seller_offer=sale_offer).save()
-            [ItemTransfer.handling_offer(offer, diff) for offer in [buy_offer, sale_offer]]
-            ItemTransfer.items_transfer(sale_offer, diff)
-            ItemTransfer.items_transfer(buy_offer, diff, True)
+        buy_offer = Offer(user=request.user, quantity=sale_offer.quantity, entry_quantity=sale_offer.quantity,
+                          price=sale_offer.price, order_type=OrderType.BUY.value, item=sale_offer.item)
+        buy_offer.save()
+        diff = min(buy_offer.quantity, sale_offer.quantity)
+        Trade(item=sale_offer.item, seller=sale_offer.user, buyer=buy_offer.user, quantity=diff,
+              unit_price=sale_offer.price / sale_offer.quantity, buyer_offer=buy_offer,
+              seller_offer=sale_offer).save()
+        [ItemTransfer.handling_offer(offer, diff) for offer in [buy_offer, sale_offer]]
+        ItemTransfer.items_transfer(sale_offer, diff)
+        ItemTransfer.items_transfer(buy_offer, diff, True)
 
 
 class TradeSerializer(serializers.ModelSerializer):
@@ -84,3 +83,18 @@ class ItemsFileSerializer(serializers.Serializer):
 
     class Meta:
         fields = ('document',)
+
+
+class ItemIdSerializer(serializers.Serializer):
+    items = serializers.ListField(child=serializers.IntegerField())
+
+    class Meta:
+        fields = ('items',)
+
+
+class ItemTest(serializers.Serializer):
+    id = serializers.IntegerField()
+    price = serializers.IntegerField()
+
+    class Meta:
+        fields = ('id', 'price',)
