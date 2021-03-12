@@ -7,7 +7,7 @@ RUN pip install pipenv \
     && pipenv install --deploy --system --ignore-pipfile
 
 COPY entrypoint.sh /app/
-RUN chmod +x entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 COPY . /app/
 

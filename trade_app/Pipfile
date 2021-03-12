@@ -8,6 +8,12 @@ django = "*"
 psycopg2-binary = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
+celery = "*"
+redis = "*"
+django-celery-beat = "*"
+pytest-django = "*"
+drf-nested-routers = "*"
+pandas = "*"
 
 [dev-packages]
 
